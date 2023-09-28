@@ -1,6 +1,6 @@
 classdef DiscriminativePower
     methods (Static)
-        %% ROC AND AUC
+        %% ROC AND AUC, Accuracy
         function [thresholds, rateOfTruePositive, rateOfFalsePositive, areaUnderTheCurve, accuracy] = buildROC(measurement, chartTitle)
              noOfThresholds = 100000;
              accuracy = 0;
@@ -51,7 +51,7 @@ classdef DiscriminativePower
              areaUnderTheCurve = DiscriminativePower.getAreaUnderTheCurve(rateOfFalsePositive, rateOfTruePositive);
              plot(rateOfFalsePositive', rateOfTruePositive', "r.-");
              title(chartTitle)
-             text(0, 1, "Area Under The Curve: " + areaUnderTheCurve);
+             text(0, 0.9, "AUC: " + areaUnderTheCurve);
              text(0, 0.8, "Accuracy: " + accuracy);
              ylabel("Rate of True Positive(sensibility)");
              xlabel("Rate of False Positive(1 - sensitivity)");
@@ -89,6 +89,14 @@ classdef DiscriminativePower
         
         function parallelogramArea = getParallelogramArea(deltaX, y1, y2)
             parallelogramArea = DiscriminativePower.getTriangleArea(deltaX, y2 - y1) + DiscriminativePower.getRectangleArea(deltaX, y1);
+        end
+
+        %% BoxPlot
+        function buildBoxPlot(measurements, chartTitle)
+            classes = ["Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2"];
+            boxplot(measurements, classes);
+            title(chartTitle + " BoxPlot");
+            ylabel(chartTitle);
         end
         
         %% Utils -- Remove duplicate values to simplify the solutions

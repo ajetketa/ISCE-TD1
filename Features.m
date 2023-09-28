@@ -6,6 +6,11 @@ classdef Features
         frequency;
     end
 
+    properties (Constant)
+        noOfElementsPerWindow = 1028;
+        overlapPercentage = 0.3;
+    end
+
     methods
         function obj = Features(emg, frequency)
             datasetSize = size(emg);
@@ -35,15 +40,17 @@ classdef Features
                 mean(i) = sum / obj.noOfSamples;
                 
                 sumOfVariance = 0;
-                sumOfMeanDifference = 0;
+                sumOfMeanThird = 0;
+                sumOfMeanFourth = 0;
                 for j = 1:obj.noOfSamples
                     sumOfVariance = sumOfVariance + (obj.emg(i,j) - mean(i)).^2;
-                    sumOfMeanDifference = sumOfMeanDifference - mean(i) + obj.emg(i, j);
+                    sumOfMeanThird = sumOfMeanThird + (obj.emg(i,j) - mean(i)).^3;
+                    sumOfMeanFourth = sumOfMeanFourth + (obj.emg(i,j) - mean(i)).^4;
                 end
                 variance(i) = sumOfVariance / obj.noOfSamples;
                 standardDeviation(i) = sqrt(variance(i));
-                skewness(i) = (sumOfMeanDifference / obj.noOfSamples).^3 / standardDeviation(i).^3;
-                kurtosis(i) = ((sumOfMeanDifference / obj.noOfSamples).^4 / standardDeviation(i).^4) - 3;
+                skewness(i) = sumOfMeanThird / (obj.noOfSamples * standardDeviation(i).^3);
+                kurtosis(i) = (sumOfMeanFourth / (obj.noOfSamples * standardDeviation(i).^4)) - 3;
             
                 currentSortedEmg = sort(obj.emg(i, :));
                 median(i) = (currentSortedEmg(25000) + currentSortedEmg(25001))/2;
@@ -69,7 +76,44 @@ classdef Features
         end
 
         %% Calculate Moments, Energy By Frequency Band, H/L ratio
-        function getSpectralFeatures(obj)
+        function [power, meanPowerFrequency, skewnessCoefficient, kurtosisCoefficient] = getSpectralFeatures(obj)
+            power = zeros(obj.noOfMeasurements, 1);
+            meanPowerFrequency = zeros(obj.noOfMeasurements, 1);
+            skewnessCoefficient = zeros(obj.noOfMeasurements, 1);
+            kurtosisCoefficient = zeros(obj.noOfMeasurements, 1);
+
+            for i = 1:obj.noOfMeasurements
+                fastFourierTransform = fft(obj.emg(i,:));
+                realFastFourier = real(fastFourierTransform);
+                imaginaryFastFourier = imag(fastFourierTransform);
+                psd = sqrt(realFastFourier.^2 + imaginaryFastFourier.^2);
+
+                power(i, 1) = obj.getMoment(psd, 0);
+                meanPowerFrequency(i, 1) = obj.getMoment(psd, 2) / power(i, 1);
+                skewnessCoefficient(i, 1) = obj.getMoment(psd, 3) / sqrt(obj.getMoment(psd, 2).^3);
+                kurtosisCoefficient(i, 1) = obj.getMoment(psd, 4) / obj.getMoment(psd, 2).^2;
+            end
+        end
+
+        %% Utils - For Features
+        function moment = getMoment(obj, psd, power)
+             moment = 0;
+             for i = 1:(length(psd)/2)+1
+                 moment = moment + i.^power .* psd(i); 
+             end
+             moment = moment * 2;
+        end
+
+        function window = getWindow(obj, rowIndex, noOfWindow)
+            startingIndex = noOfWindow * obj.noOfElementsPerWindow;
+            if noOfWindow ~= 0
+                startingIndex = (1 - obj.overlapPercentage) * startingIndex;
+            end
+            endingIndex = startingIndex + obj.noOfElementsPerWindow;
+
+            window = obj.emg(rowIndex, startingIndex:endingIndex);
         end
     end
+
+
 end
