@@ -108,7 +108,7 @@ classdef Features
             end
         end
 
-        % Find the number of points from a sliding window that are within a confidence range from the overall measurement
+        % 
         function [noOfPointsIn] = getNoOfPointsWithinSecurityRange(obj, measurement, measurementBySlidingWindow, degreeOfConfidence)
             noOfPointsIn = zeros(obj.noOfMeasurements, 1);
             for i = 1:obj.noOfMeasurements

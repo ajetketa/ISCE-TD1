@@ -85,24 +85,22 @@ classdef DiscriminativePower
             areaUnderTheCurve = -1 * areaUnderTheCurve;
         end
         
-        % Calculate Triangle Area 
+        
         function triangleArea = getTriangleArea(deltaX, deltaY)
             c = sqrt(deltaX.^2 + deltaY.^2);
             halfPerimeter = (c + deltaX + deltaY) / 2;
             triangleArea = sqrt(halfPerimeter * (halfPerimeter - c) * (halfPerimeter - deltaY) * (halfPerimeter - deltaX));
         end
         
-        % Calculate Rectangle Area
         function rectangleArea = getRectangleArea(deltaX, y)
             rectangleArea = deltaX * y;
         end
         
-        % Calculate Parallelogram Area
         function parallelogramArea = getParallelogramArea(deltaX, y1, y2)
             parallelogramArea = DiscriminativePower.getTriangleArea(deltaX, y2 - y1) + DiscriminativePower.getRectangleArea(deltaX, y1);
         end
 
-        %% BoxPlot - Build the boxplot for the given measurements 
+        %% BoxPlot
         function buildBoxPlot(measurements, chartTitle)
             classes = ["Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class1" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2" "Class2"];
             boxplot(measurements, classes);
@@ -110,15 +108,15 @@ classdef DiscriminativePower
             ylabel(chartTitle);
         end
         
-        %% Utils -- Find the optimal number of thresholds for the given measurement
+        %% Utils -- Remove duplicate values to simplify the solutions
         function [thresholds] = getOptimalThresholds(measurement)
             sortedMeasurements = sort(measurement);
-            thresholds = [sortedMeasurements(1, 1) - 1];
+            thresholds = [sortedMeasurements(1,1) - 1];
             for i = 1:length(sortedMeasurements)
                 if i == 1 || i == length(sortedMeasurements)
                     thresholds = [thresholds; sortedMeasurements(i, 1)]
                 else
-                    if sortedMeasurements(i, 1) < sortedMeasurements(i + 1, 1)
+                    if sortedMeasurements(i, 1) < sortedMeasurements(i+1, 1)
                         thresholds = [thresholds; sortedMeasurements(i, 1)]
                     end
                 end
