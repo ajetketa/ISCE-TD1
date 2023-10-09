@@ -61,7 +61,7 @@ classdef DiscriminativePower
              text(0, 0.8, "Sensitivity: " + bestSensitivity);
              text(0, 0.75, "Specificity: " + bestSpecificity);
              ylabel("Rate of True Positive(Sensitivity)");
-             xlabel("Rate of False Positive(1 - specificity)");
+             xlabel("Rate of False Positive(1 - Specificity)");
         end
         
         % Calculate Area Under The Curve (AUC)

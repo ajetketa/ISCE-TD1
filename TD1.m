@@ -22,11 +22,11 @@ features = Features(emg, frequency);
 [energy, rms] = features.getTemporalFeatures();
 [power, meanPowerFrequency, skewnessCoefficient, kurtosisCoefficient, energyByFrequencyBands, highLowRatio] = features.getSpectralFeatures();
 [meansWithSlidingWindow, variancesWithSlidingWindow] = features.getStatisticalFeaturesBySlidingWindow(10);
-[noOfSlidingWindowMeansWithinRange] = features.getNoOfPointsWithinSecurityRange(mean, meansWithSlidingWindow, 0.04);
-[noOfSlidingWindowVariancesWithinRange] = features.getNoOfPointsWithinSecurityRange(variance, variancesWithSlidingWindow, 0.04);
+[noOfSlidingWindowMeansWithinRange] = features.getNoOfPointsWithinSecurityRange(mean, meansWithSlidingWindow, 0.1);
+[noOfSlidingWindowVariancesWithinRange] = features.getNoOfPointsWithinSecurityRange(variance, variancesWithSlidingWindow, 0.1);
 
-measurement = mean;
-measurementLabel = "Mean";
+measurement = highLowRatio;
+measurementLabel = "No. Window Means Within Range";
 
 fig=gcf;
 fig.Position(3:4)=[1400,400];

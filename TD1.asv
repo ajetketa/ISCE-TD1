@@ -25,8 +25,8 @@ features = Features(emg, frequency);
 [noOfSlidingWindowMeansWithinRange] = features.getNoOfPointsWithinSecurityRange(mean, meansWithSlidingWindow, 0.04);
 [noOfSlidingWindowVariancesWithinRange] = features.getNoOfPointsWithinSecurityRange(variance, variancesWithSlidingWindow, 0.04);
 
-measurement = noOfMeansInRangeOfConfidence;
-measurementLabel = "Mean In Confidence";
+measurement = meanPowerFrequency;
+measurementLabel = "Mean Power Frequency";
 
 fig=gcf;
 fig.Position(3:4)=[1400,400];

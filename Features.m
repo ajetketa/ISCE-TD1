@@ -8,6 +8,7 @@ classdef Features
 
     methods
         function obj = Features(emg, frequency)
+            datasetSize = size(emg);
             obj.emg = emg;
             obj.noOfMeasurements = datasetSize(1);
             obj.noOfSamples = datasetSize(2);
@@ -84,6 +85,10 @@ classdef Features
 
             for i = 1:obj.noOfMeasurements
                 [psd, f] = pwelch(obj.emg(i,:), [], [], [], obj.frequency);
+                plot(f, psd)
+                title("PSD");
+                xlabel("Frequency");
+                ylabel("PSD");
                 power(i, 1) = obj.getMoment(psd, f, 0);
                 sumOfPsdInFrequencyBand = 0;
                 sumOfLow = 0;
@@ -93,9 +98,9 @@ classdef Features
                         sumOfPsdInFrequencyBand = sumOfPsdInFrequencyBand + psd(index);
                     end
 
-                    if f(index) >= 50 && f(index) <= 500
+                    if f(index) >= 100 && f(index) < 150
                         sumOfLow = sumOfLow + psd(index);
-                    elseif f(index) >= 500 && f(index) <= 2000
+                    elseif f(index) >= 150 && f(index) <= 2000
                         sumOfHigh = sumOfHigh + psd(index);
                     end
                 end
